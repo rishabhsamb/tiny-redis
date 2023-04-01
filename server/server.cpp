@@ -9,8 +9,8 @@
 #include <vector>
 #include <map>
 #include <poll.h>
-#include "protocol.h"
-#include "conn.h"
+#include "../headers/protocol.h"
+#include "../headers/conn.h"
 
 enum {
     RES_OK = 0,

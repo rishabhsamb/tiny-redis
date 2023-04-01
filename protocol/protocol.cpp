@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <cstring>
-#include "protocol.h"
+#include "../headers/protocol.h"
 
 int32_t read_full(int fd, char *buf, size_t n) {
         while (n > 0) {

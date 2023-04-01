@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
-#include "protocol.h"
+#include "../headers/protocol.h"
 
 static int32_t send_req(int fd, const std::vector<std::string> &cmd) {
     uint32_t len = 4;
