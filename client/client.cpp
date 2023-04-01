@@ -66,7 +66,7 @@ static int32_t read_res(int fd) {
         return -1;
     }
     memcpy(&rescode, &rbuf[4], 4);
-    printf("server says: [%u] %.*s\n", rescode, len - 4, &rbuf[8]);
+    // printf("server says: [%u] %.*s\n", rescode, len - 4, &rbuf[8]);
     return 0;
 }
 

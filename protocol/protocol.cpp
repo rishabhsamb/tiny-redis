@@ -9,7 +9,7 @@
 int32_t read_full(int fd, char *buf, size_t n) {
         while (n > 0) {
                 ssize_t rv = read(fd, buf, n); // read can read only 'partially' (not what we expect), so we keep trying until we read n bytes
-                std::cerr << "rv is " << rv << " n is " << n << std::endl;
+                // std::cerr << "rv is " << rv << " n is " << n << std::endl;
                 if (rv <= 0) {
                         return -1; // did not read enough bytes to properly eof
                 }
@@ -37,7 +37,7 @@ int32_t write_all(int fd, const char *buf, size_t n) {
                 n -= (size_t) rv;
                 buf += rv;
         }
-        std::cerr << "returning 0 from write_all" << std::endl;
+        // std::cerr << "returning 0 from write_all" << std::endl;
         return 0;
 }
 

@@ -82,48 +82,6 @@ static int32_t parse_req(
     }
     return 0;
 }
-
-static int32_t one_request(int connfd) {
-	// 4 bytes header (message size)
-	char rbuf[4 + k_max_msg + 1]; // header + max msg size + null terminator LOL
-	errno = 0;
-	int32_t err = read_full(connfd, rbuf, 4);
-	if (err) {
-		if (err == 0) {
-			std::cerr << "found eof successfully" << std::endl;
-			} else {
-			std::cerr << "read() error " << err << std::endl;
-		}
-		return err;
-	}
-
-	uint32_t len = 0;
-	memcpy(&len, rbuf, 4);  // little endian
-	std::cerr << "len is " << len << std::endl;
-	if (len > k_max_msg) {
-		std::cerr << "message too long: " << len << std::endl;
-		return -1;
-	}
-
-	// request body
-	err = read_full(connfd, &rbuf[4], len); // pass a pointer to the buffer AFTER the int size
-	if (err) {
-		std::cerr << "read_full error " << err << std::endl;
-		return err;
-	}
-
-	rbuf[4 + len] = '\0'; // our message does not include the null terminator (language agnostic)!
-	printf("client says: %s\n", &rbuf[4]); // pass a pointer to the buffer AFTER the int size
-
-	// reply using the same protocol
-	const char reply[] = "message received boss!";
-	char wbuf[4 + sizeof(reply)];
-	len = (uint32_t)strlen(reply);
-	memcpy(wbuf, &len, 4); // copy header size into first 4 bytes
-	memcpy(&wbuf[4], reply, len); // copy message afterward (not including null terminator!)
-	return write_all(connfd, wbuf, 4 + len);
-}
-
 static bool try_flush_buffer(Conn *conn) {
 	ssize_t rv = 0;
 	do {
@@ -200,7 +158,7 @@ static bool try_one_request(Conn *conn) {
 		return false;
 	}
 
-	printf("client says: %.*s\n", len, &conn->rbuf[4]);
+	////  printf("client says: %.*s\n", len, &conn->rbuf[4]);
 
 	uint32_t rescode = 0;
 	uint32_t wlen = 0;
@@ -281,13 +239,13 @@ static bool try_fill_buffer(Conn* conn) {
 		rv = read(conn->fd, &conn->rbuf[conn->rbuf_size], cap);
 	} while (rv < 0 && errno == EINTR);
 	if (rv < 0) {
-		std::cerr << "error on read()" << std::endl;
+		std::cerr << "error on read() in try_fill_buffer" << std::endl;
 		conn->state = STATE_END;
 		return false;
 	}
 	if (rv == 0) {
 		if (conn->rbuf_size > 0) {
-			std::cerr << "unexpected EOF in try_fill_buffer)" << std::endl;
+			std::cerr << "unexpected EOF in try_fill_buffer" << std::endl;
 			} else {
 			std::cerr << "EOF" << std::endl;
 		}
